@@ -28,6 +28,7 @@ window.$$settings = require('./settings');
 import {get, initLocale} from '@/api/locale'
 import {getToken} from '@/utils/auth'
 import VueI18n from 'vue-i18n';
+
 //初始化国际化插件
 Vue.use(VueI18n);
 let language = (navigator.language || navigator.browserLanguage).toLowerCase();
@@ -36,47 +37,16 @@ const message_en = {};
 
 if (getToken()) {
     get().then((res) => {
-        let zh =[];
-        let en = [];
         res.data.records.forEach((item)=>{
-            if(item.locale === 'zh-CN'){
-                zh.push(item);
-            }
-        });
-    
-        res.data.records.forEach((item)=>{
-            if(item.locale === 'en'){
-                en.push(item);
-            }
-        });
-        zh.forEach((data) => {
-            message_zh[data.code] = data.name;
-        });
-        en.forEach((data) => {
-            message_en[data.code] = data.name;
+            message_zh[item.code] = item.zh;
+            message_en[item.code] = item.en;
         });
     });
 } else {
     initLocale().then((res) => {
-        let zh =[];
-        let en = [];
-        res.data.forEach((item)=>{
-            if(item.locale === 'zh-CN'){
-                zh.push(item);
-            }
-        });
-    
-        res.data.forEach((item)=>{
-            if(item.locale === 'en'){
-                en.push(item);
-            }
-        });
-    
-        zh.forEach((data) => {
-            message_zh[data.code] = data.name;
-        });
-        en.forEach((data) => {
-            message_en[data.code] = data.name;
+        res.data.records.forEach((item)=>{
+            message_zh[item.code] = item.zh;
+            message_en[item.code] = item.en;
         });
     });
 }

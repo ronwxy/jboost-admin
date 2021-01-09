@@ -43,6 +43,6 @@ export function initLocale() {
     return request({
         url: `init-locale`,
         method: 'get',
-        params: {}
+        params: {size:999}
     })
 }
