@@ -76,13 +76,12 @@
 <script>
 import checkPermission from '@/utils/permission'
 import initData from '@/mixins/initData'
-import initDict from '@/mixins/initDict'
 import { del } from '@/api/job'
 import { parseTime } from '@/utils/index'
 import eForm from './form'
 export default {
   components: { eForm },
-  mixins: [initData, initDict],
+  mixins: [initData],
   data() {
     return {
       delLoading: false,

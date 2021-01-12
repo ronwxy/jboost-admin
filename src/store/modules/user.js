@@ -27,12 +27,16 @@ const user = {
     actions: {
         // 登录
         Login({commit}, userInfo) {
+            const loginType = userInfo.loginType;
             const username = userInfo.username;
-            const password = decrypt(userInfo.password);
+            let password;
+            if(loginType === 'USER') {
+                password = decrypt(userInfo.password);
+            }
             const code = userInfo.code;
             const uuid = userInfo.uuid;
             const phone = userInfo.phone;
-            const loginType = userInfo.loginType;
+            
             const rememberMe = userInfo.rememberMe;
             return new Promise((resolve, reject) => {
                 login(username, password, code, uuid,phone, 'ADMIN',loginType).then(res => {

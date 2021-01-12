@@ -1,46 +1,70 @@
 <template>
     <div class="login">
         <template v-if="language === 'en'">
-            <div class="language" @click.stop="locale">
+            <div class="language" @click.stop="locale('zh')">
                 中
             </div>
         </template>
         <template v-else>
-            <div class="language" @click.stop="locale">
+            <div class="language" @click.stop="locale('en')">
                 En
             </div>
         </template>
         <div class="container">
             <div class="login-logo">
-                <div class="title">{{$t("home_title")}}</div>
+                <div class="title">{{$t("login.home_title")}}</div>
                 <div class="login">
                     <img src="../assets/lb1.jpg" :style="{opacity:showOpacity && 1 || 0}" class="lb"/>
                     <img src="../assets/lb2.jpg" :style="{opacity:!showOpacity && 1 || 0}" class="lb"/>
                 </div>
             </div>
             <div class="login-body">
-                <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px"
+                <el-form ref="loginForm" :model="loginType === 'USER' ? usernameLogin : phoneLogin" :rules="loginType === 'USER' ? usernameLoginRules : phoneLoginRules" label-position="left" label-width="0px"
                          class="login-form">
                     <div class="title-item">
-                        <div class="title" @click="onSelectLoginType('USER')" :class="{'active':loginType=== 'USER'}">{{$t('username_login')}}</div>
-                        <div class="title" @click="onSelectLoginType('PHONE')" :class="{'active':loginType=== 'PHONE'}">{{$t('phone_login')}}</div>
+                        <div class="title" @click="onSelectLoginType('USER')" :class="{'active':loginType=== 'USER'}">{{$t('login.username_login')}}</div>
+                        <div class="title" @click="onSelectLoginType('PHONE')" :class="{'active':loginType=== 'PHONE'}">{{$t('login.phone_login')}}</div>
                     </div>
-                    <template v-if="loginType === 'USER'">
+
+                    <div v-show="loginType === 'USER'">
                         <el-form-item prop="username">
-                            <el-input v-model="loginForm.username" type="text" auto-complete="off" :placeholder="$t('username')">
+                            <el-input v-model="usernameLogin.username" type="text" auto-complete="off" :placeholder="$t('login.username')">
                                 <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon"/>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="password">
-                            <el-input v-model="loginForm.password" type="password" auto-complete="off" :placeholder="$t('password')"
-                                      @keyup.enter.native="handleLogin">
+                            <el-input v-model="usernameLogin.password" type="password" auto-complete="off" :placeholder="$t('login.password')" @keyup.enter.native="handleLogin">
                                 <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"
-                                          style="color:red"/>
-
+                                            style="color:red"/>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="captcha" style="display: flex;">
-                            <el-input v-model="loginForm.captcha" auto-complete="off" :placeholder="$t('identify')" style="width: 174px;margin-right: 5px;"
+                            <el-input v-model="usernameLogin.captcha" auto-complete="off" :placeholder="$t('login.captcha')" style="width: 174px;margin-right: 5px;"
+                                        @keyup.enter.native="handleLogin">
+                                <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
+                            </el-input>
+                            <div class="login-code">
+                                <img :src="codeUrl" @click="getCode">
+                            </div>
+                        </el-form-item>
+                        <el-checkbox v-model="usernameLogin.rememberMe" style="margin:0px 0px 25px 0px;color:#FFFFFF">{{$t('login.remember_me')}}
+                        </el-checkbox>
+                        <!-- <el-form-item prop="rememberMe" style="width:100%;">
+                            <el-button :loading="loading" size="medium" type="primary" style="width:100%;"
+                                        @click.native.prevent="handleLogin">
+                                <span v-if="!loading">{{$t('login.login')}}</span>
+                                <span v-else>{{$t('login.logging')}}</span>
+                            </el-button>
+                        </el-form-item> -->
+                    </div>
+                    <div v-show="loginType === 'PHONE'">
+                        <el-form-item prop="phone">
+                            <el-input v-model="phoneLogin.phone" type="text" auto-complete="off" :placeholder="$t('login.phone')">
+                                <svg-icon slot="prefix" icon-class="phone" class="el-input__icon input-icon"/>
+                            </el-input>
+                        </el-form-item>
+                         <el-form-item prop="captcha" style="display: flex;">
+                            <el-input v-model="phoneLogin.captcha" auto-complete="off" :placeholder="$t('login.captcha')" style="width: 174px;margin-right: 5px;"
                                       @keyup.enter.native="handleLogin">
                                 <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
                             </el-input>
@@ -48,24 +72,8 @@
                                 <img :src="codeUrl" @click="getCode">
                             </div>
                         </el-form-item>
-                        <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;color:#FFFFFF">{{$t('remember_me')}}
-                        </el-checkbox>
-                        <el-form-item style="width:100%;">
-                            <el-button :loading="loading" size="medium" type="primary" style="width:100%;"
-                                       @click.native.prevent="handleLogin">
-                                <span v-if="!loading">{{$t('login')}}</span>
-                                <span v-else>{{$t('logging')}}</span>
-                            </el-button>
-                        </el-form-item>
-                    </template>
-                    <template v-else>
-                        <el-form-item prop="phone">
-                            <el-input v-model="loginForm.phone" type="text" auto-complete="off" :placeholder="$t('phone')">
-                                <svg-icon slot="prefix" icon-class="phone" class="el-input__icon input-icon"/>
-                            </el-input>
-                        </el-form-item>
                         <el-form-item prop="code" style="display: flex;">
-                            <el-input v-model="loginForm.code" auto-complete="off" :placeholder="$t('identify')" style="width: 174px;margin-right: 5px;"
+                            <el-input v-model="phoneLogin.code" auto-complete="off" :placeholder="$t('login.sms_code')" style="width: 174px;margin-right: 5px;"
                                       @keyup.enter.native="handleLogin">
                                 <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
                             </el-input>
@@ -73,29 +81,21 @@
                                 <div class="send-verify" @click="onSendVerify" :class="{disabled:timeout > 0}">
                                     {{timeout === 0 ? ( isSend ? '重新发送' : '获取验证码' ) : (timeout + '秒再获取')}}
                                 </div>
-<!--                                <img :src="codeUrl" @click="getCode">-->
                             </div>
                         </el-form-item>
-                        <!-- <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;color:#FFFFFF">{{$t('remember_me')}}
-                        </el-checkbox> -->
-                        <el-form-item style="width:100%;">
+                       
+                    </div>
+                     <el-form-item style="width:100%;">
                             <el-button :loading="loading" size="medium" type="primary" style="width:100%;"
                                        @click.native.prevent="handleLogin">
-                                <span v-if="!loading">{{$t('login')}}</span>
-                                <span v-else>{{$t('logging')}}</span>
+                                <span v-if="!loading">{{$t('login.login')}}</span>
+                                <span v-else>{{$t('login.logging')}}</span>
                             </el-button>
-                        </el-form-item>
-                    </template>
+                    </el-form-item>
+
                 </el-form>
             </div>
         </div>
-
-        <!--  底部  -->
-        <!--<div v-if="$store.state.settings.showFooter" class="login-footer">-->
-        <!--<span v-html="$store.state.settings.footerTxt"/>-->
-        <!--&lt;!&ndash;<span> ⋅ </span>&ndash;&gt;-->
-        <!--&lt;!&ndash;<a href="http://www.beian.miit.gov.cn" target="_blank">{{ $store.state.settings.caseNumber }}</a>&ndash;&gt;-->
-        <!--</div>-->
     </div>
 </template>
 
@@ -104,9 +104,6 @@
     import Config from '@/config'
     import {getCodeImg,getIdentify} from '@/api/login'
     import Cookies from 'js-cookie'
-    import {get} from '@/api/locale'
-
-
 
     export default {
         name: 'Login',
@@ -114,21 +111,18 @@
             return {
                 codeUrl: '',
                 cookiePass: '',
-                loginForm: {
+                usernameLogin: {
                     username: '',
                     password: '',
                     rememberMe: false,
                     captcha: '',
-                    phone: '',
-                    code: '',
                     uuid: ''
                 },
-                loginRules: {
-                    username: [{required: true, trigger: 'blur', message: '用户名不能为空'}],
-                    password: [{required: true, trigger: 'blur', message: '密码不能为空'}],
-                    captcha: [{required: true, trigger: 'change', message: '验证码不能为空'}],
-                    code: [{required: true, trigger: 'change', message: '验证码不能为空'}],
-                    phone:[{required: true, trigger: 'change', message: '手机号不能为空'}],
+                phoneLogin:{
+                    phone: '',
+                    captcha: '',
+                    uuid: '',
+                    code: ''
                 },
                 loading: false,
                 redirect: undefined,
@@ -139,6 +133,24 @@
                 verify: '',
                 timeout: 0,
                 isSend: false,
+            }
+        },
+        computed: {
+            usernameLoginRules() {
+                return {
+                    username: [{required: true, trigger: 'change', message: this.$t('login.username_required')}],
+                    password: [{required: true, trigger: 'change', message:
+                    this.$t('login.password_required')}],
+                    captcha: [{required: true, trigger: 'change', message: 
+                    this.$t('login.captcha_required')}],
+                }
+            },
+            phoneLoginRules() {
+                return {
+                    phone:[{required: true, trigger: 'change', message: this.$t('login.phone_required')}],
+                    captcha: [{required: true, trigger: 'change', message: this.$t('login.captcha_required')}],
+                    code: [{required: true, trigger: 'change', message: this.$t('login.code_required')}],
+                }
             }
         },
         watch: {
@@ -154,7 +166,7 @@
             this.getCookie();
             window.setInterval(this.report, 5000);
             this.title = process.env.VUE_APP_NAME;
-            this.language = (navigator.language || navigator.browserLanguage).toLowerCase();
+            this.language = localStorage.getItem('locale') || (navigator.language || navigator.browserLanguage).toLowerCase();
 
         },
         methods: {
@@ -164,7 +176,11 @@
             getCode() {
                 getCodeImg().then(res => {
                     this.codeUrl = 'data:image/gif;base64,' + res.data.img;
-                    this.loginForm.uuid = res.data.uuid
+                    if(this.loginType === 'USER') {
+                        this.usernameLogin.uuid = res.data.uuid
+                    }else{
+                        this.phoneLogin.uuid = res.data.uuid
+                    }
                 })
             },
             getCookie() {
@@ -173,13 +189,10 @@
                 const rememberMe = Cookies.get('rememberMe')
                 // 保存cookie里面的加密后的密码
                 this.cookiePass = password === undefined ? '' : password
-                this.loginForm = {
-                    username: username === undefined ? this.loginForm.username : username,
-                    password: password === undefined ? this.loginForm.password : password,
+                this.usernameLogin = {
+                    username: username === undefined ? this.usernameLogin.username : username,
+                    password: password === undefined ? this.usernameLogin.password : password,
                     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-                    captcha: '',
-                    phone: '',
-                    code: ''
                 }
             },
             handleLogin() {
@@ -187,11 +200,11 @@
                     let user = {};
                     if(this.loginType==='USER'){
                         user = {
-                            username: this.loginForm.username,
-                            password: this.loginForm.password,
-                            rememberMe: this.loginForm.rememberMe,
-                            code: this.loginForm.captcha,
-                            uuid: this.loginForm.uuid,
+                            username: this.usernameLogin.username,
+                            password: this.usernameLogin.password,
+                            rememberMe: this.usernameLogin.rememberMe,
+                            code: this.usernameLogin.captcha,
+                            uuid: this.usernameLogin.uuid,
                             loginType:"USER",
                         }
                         if (user.password !== this.cookiePass) {
@@ -199,13 +212,11 @@
                         }
                     }else{
                         user = {
-                            phone: this.loginForm.phone,
-                            code: this.loginForm.code,
-                            uuid: this.loginForm.uuid,
+                            phone: this.phoneLogin.phone,
+                            code: this.phoneLogin.code,
                             loginType:"PHONE",
                         }
                     }
-
 
                     if (valid) {
                         this.loading = true
@@ -231,24 +242,23 @@
                     }
                 })
             },
-            locale() {
-                if (this.language === 'zh-cn') {
-                    this.$i18n.locale = 'en';
-                    this.language = 'en';
+            locale(lang) {
+                localStorage.setItem('locale', lang);
+                this.$i18n.locale = lang;
+                if (this.language === 'en') {
+                    this.language = 'zh';
                 } else {
-                    this.$i18n.locale = 'zh-cn';
-                    this.language = 'zh-cn';
+                    this.language = 'en';
                 }
             },
             onSelectLoginType(type){
                 this.loginType = type;
-                this.$refs.loginForm.resetFields();
+                this.getCode()
             },
             onSendVerify () {
-                if (this.isPhone(this.loginForm.phone)) {
+                if (this.isPhone(this.phoneLogin.phone)) {
                     if (this.timeout === 0) {
-                        getIdentify(this.loginForm.phone).then(res =>{
-                            this.loginForm.code = '';
+                        getIdentify(this.phoneLogin.phone, this.phoneLogin.captcha, this.phoneLogin.uuid).then(res =>{
                             this.$set(this, 'isSend', true);
                             this.$set(this, 'timeout', 60);
                             let timeout = setInterval(() => {
@@ -282,7 +292,7 @@
             isPhone(phone) {
                 return /^(1[3-9][0-9])\d{8}$/.test(phone);
             },
-        }
+        },
     }
 </script>
 

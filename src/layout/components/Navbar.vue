@@ -5,10 +5,10 @@
 
         <div class="right-menu">
             <template v-if="language === 'en'">
-                <img src="../../assets/zh.png" class="language" @click.stop="locale">
+                <img src="../../assets/zh.png" class="language" @click.stop="locale('zh')">
             </template>
             <template v-else>
-                <img src="../../assets/en.png" class="language" @click.stop="locale">
+                <img src="../../assets/en.png" class="language" @click.stop="locale('en')">
             </template>
 
             <template v-if="device!=='mobile'">
@@ -71,7 +71,7 @@
             if(this.$i18n.locale){
                 this.language = this.$i18n.locale;
             }else{
-                this.language = (navigator.language || navigator.browserLanguage).toLowerCase();
+                this.language = localStorage.getItem('locale') || (navigator.language || navigator.browserLanguage).toLowerCase();
             }
         },
         computed: {
@@ -111,13 +111,13 @@
                     location.reload() // 为了重新实例化vue-router对象 避免bug
                 })
             },
-            locale() {
-                if (this.language === 'zh-cn') {
-                    this.$i18n.locale = 'en';
-                    this.language = 'en';
+            locale(lang) {
+                localStorage.setItem('locale', lang);
+                this.$i18n.locale = lang;
+                if (this.language === 'en') {
+                    this.language = 'zh';
                 } else {
-                    this.$i18n.locale = 'zh-cn';
-                    this.language = 'zh-cn';
+                    this.language = 'en';
                 }
             }
         }

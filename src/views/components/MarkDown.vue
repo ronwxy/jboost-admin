@@ -12,7 +12,6 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { getToken } from '@/utils/auth'
-import { del } from '@/api/picture'
 export default {
   name: 'Markdown',
   data() {
@@ -56,10 +55,7 @@ export default {
     imgDel(file, pos) {
       const image = this.images[file[1]]
       if (image) {
-        del(image.id).then(res => {
-        }).catch(err => {
-          console.log(err.response.data.message)
-        })
+       
       }
     }
   }

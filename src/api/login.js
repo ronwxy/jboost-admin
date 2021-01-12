@@ -41,10 +41,14 @@ export function getCodeImg() {
     })
 }
 
-export function getIdentify(phone) {
+export function getIdentify(phone, captcha, uuid) {
     return request({
         url: 'auth/code',
-        method: 'get',
-        params: {phone}
+        method: 'post',
+        data: {
+            phone,
+            captcha,
+            uuid
+        }
     })
 }
