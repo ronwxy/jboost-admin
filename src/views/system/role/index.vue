@@ -5,8 +5,8 @@
     <!--工具栏-->
     <div class="head-container">
       <!-- 搜索 -->
-      <el-input v-model="query.value" clearable placeholder="输入名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
-      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+      <el-input v-model="query.value" clearable style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">{{$t('op.query')}}</el-button>
       <!-- 新增 -->
       <div style="display: inline-block;margin: 0px 2px;">
         <el-button
@@ -14,7 +14,7 @@
           size="mini"
           type="primary"
           icon="el-icon-plus"
-          @click="add">新增</el-button>
+          @click="add">{{$t('op.add')}}</el-button>
       </div>
     </div>
     <el-row :gutter="15">
@@ -22,27 +22,20 @@
       <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="17">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
-            <span class="role-span">角色列表</span>
-            <div id="opt" style="float: right">
-              <el-radio-group v-model="opt" size="mini">
-                <!--<el-radio-button label="菜单分配"/>-->
-                <!--<el-radio-button label="权限分配"/>-->
-              </el-radio-group>
-            </div>
+            <span class="role-span">{{$t('role.list')}}</span>
           </div>
           <el-table v-loading="loading" :data="data" highlight-current-row size="small" style="width: 100%;" @current-change="handleCurrentChange">
-            <el-table-column prop="name" label="名称"/>
-            <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述"/>
-            <el-table-column :show-overflow-tooltip="true" prop="createTime" label="创建日期">
+            <el-table-column prop="name" :label="$t('role.name')"/>
+            <el-table-column :show-overflow-tooltip="true" prop="remark" :label="$t('role.desc')"/>
+            <el-table-column :show-overflow-tooltip="true" prop="createTime" :label="$t('common.create_time')">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="130px" align="center">
+            <el-table-column :label="$t('op.op')" width="250px" align="center">
               <template slot-scope="scope">
-                <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)"/>
+                <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)">{{$t('op.edit')}}</el-button>
                 <el-popover
-
                   :ref="scope.row.id"
                   placement="top"
                   width="180">
@@ -51,7 +44,7 @@
                     <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">{{$t('cancel')}}</el-button>
                     <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
                   </div>
-                  <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+                  <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t('op.delete')}}</el-button>
                 </el-popover>
               </template>
             </el-table-column>
@@ -68,11 +61,9 @@
       </el-col>
       <!-- 授权 -->
       <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="7">
-        <el-card v-show="opt === '菜单分配'" class="box-card" shadow="never">
+        <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
-            <el-tooltip class="item" effect="dark" content="选择指定角色分配菜单" placement="top">
-              <span class="role-span">菜单分配</span>
-            </el-tooltip>
+            <span class="role-span">{{$t('role.menus')}}</span>
             <el-button
               :disabled="!showButton"
               :loading="menuLoading"
@@ -80,7 +71,7 @@
               size="mini"
               style="float: right; padding: 6px 9px"
               type="primary"
-              @click="saveMenu">保存</el-button>
+              @click="saveMenu">{{$t('op.save')}}</el-button>
           </div>
           <el-tree
             ref="menu"
@@ -89,29 +80,6 @@
             :props="defaultProps"
             accordion
             show-checkbox
-            node-key="id"/>
-        </el-card>
-        <el-card v-show="opt === '权限分配'" class="box-card" shadow="never">
-          <div slot="header" class="clearfix">
-            <el-tooltip class="item" effect="dark" content="选择指定角色分配权限" placement="top">
-              <span class="role-span">权限分配</span>
-            </el-tooltip>
-            <el-button
-              :disabled="!showButton"
-              :loading="permissionLoading"
-              icon="el-icon-check"
-              size="mini"
-              style="float: right; padding: 6px 9px"
-              type="primary"
-              @click="savePermission">保存</el-button>
-          </div>
-          <el-tree
-            ref="permission"
-            :data="permissions"
-            :default-checked-keys="permissionIds"
-            :props="defaultProps"
-            show-checkbox
-            accordion
             node-key="id"/>
         </el-card>
       </el-col>
@@ -155,7 +123,6 @@ export default {
     parseTime,
     checkPermission,
     beforeInit() {
-      this.$refs.permission.setCheckedKeys([]);
       this.$refs.menu.setCheckedKeys([]);
       this.showButton = false;
       this.url = 'role';
@@ -198,7 +165,6 @@ export default {
         get(val.id).then(res => {
            let resources = res.data.resources;
             // 清空权限与菜单的选中
-            this.$refs.permission.setCheckedKeys([]);
             this.$refs.menu.setCheckedKeys([]);
             // 保存当前的角色id
             this.currentId = val.id;

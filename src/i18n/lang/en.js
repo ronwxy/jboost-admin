@@ -31,6 +31,40 @@ const en = {
         api_manage: "API",
     },
 
+    
+    //操作按钮
+    op: {
+        op: "Opration",
+        query: "Query",
+        add: "Add",
+        delete: "Delete",
+        edit: "Edit",
+        save: "Save",
+        reset: "Reset",
+        reset_pass: "Reset Pass",
+    },
+
+    common: {
+        create_time: "Create Time",
+    },
+
+    user: {
+        username: "Username",
+        real_name: "Real Name",
+        user_type: "User Type",
+        dept: "Department",
+        status: "Status" 
+    },
+
+    role: {
+        list: "Role List",
+        name: "Name",
+        desc: "Description",
+        menus: "Assign Menus",
+        
+        
+    },
+
 }
 
 export default en;

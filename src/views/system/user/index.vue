@@ -7,55 +7,56 @@
         <!--工具栏-->
         <div class="head-container">
             <!-- 搜索 -->
-            <el-form ref="search" :model="query" :inline="true" size="small" label-width="80px">
-                <el-form-item label="用户账号">
-                    <el-input v-model="query.username" placeholder="输入用户账号" :clearable="true" style="width: 170px"/>
+            <el-form ref="search" :model="query" :inline="true" size="small"  label-width="90px">
+                <el-form-item :label="$t('user.username')">
+                    <el-input v-model="query.username" placeholder="" :clearable="true" style="width: 170px"/>
                 </el-form-item>
-                <el-form-item label="用户名称">
-                    <el-input v-model="query.realName" placeholder="输入用户名称" :clearable="true" style="width: 170px"/>
+                <el-form-item :label="$t('user.real_name')">
+                    <el-input v-model="query.realName" placeholder="" :clearable="true" style="width: 170px"/>
                 </el-form-item>
-                <el-form-item label="选择部门">
-                    <el-select v-model="query.departId" placeholder="选择部门"
+                <el-form-item :label="$t('user.dept')">
+                    <el-select v-model="query.departId" placeholder=""
                                :clearable="true"
                                style="width: 170px">
                         <el-option v-for="item in departs" :key="item.id" :label="item.name"
                                    :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label=" ">
-                    <!-- 新增 -->
-                </el-form-item>
-            </el-form>
-            <div style="display: inline-block;margin: 0px 2px;">
+                <!-- <el-form-item label=" ">
+                   
+                </el-form-item> -->
+                     <div style="display: inline-block;margin: 0px 2px;">
                 <el-button class="filter-item" size="mini" type="success" icon="el-icon-search"
                            @click="toQuery">
-                    {{$t("query")}}
+                    {{$t("op.query")}}
                 </el-button>
             </div>
             <div style="display: inline-block;margin: 0px 2px;">
                 <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh-right"
                            @click="clearQuery">
-                    {{$t('reset')}}
+                    {{$t('op.reset')}}
                 </el-button>
             </div>
+            </el-form>
+       
             <el-button
                 class="filter-item"
                 size="mini"
                 type="primary"
                 icon="el-icon-plus"
-                @click="add">{{$t('entering')}}
+                @click="add">{{$t('op.add')}}
             </el-button>
         </div>
         <!--表格渲染-->
         <el-table v-loading="loading" :data="data" style="width: 100%;">
-            <el-table-column prop="username" label="用户账号"/>
-            <el-table-column prop="realName" label="用户名称"/>
-            <el-table-column prop="userType" label="用户类型" :formatter="formatter.userType"/>
-            <el-table-column prop="deptName" label="组织机构"/>
-            <el-table-column prop="createTime" label="创建日期"/>
-            <el-table-column prop="status" label="状态" :formatter="formatter.status"/>
+            <el-table-column prop="username" :label="$t('user.username')"/>
+            <el-table-column prop="realName" :label="$t('user.real_name')"/>
+            <el-table-column prop="userType" :label="$t('user.user_type')" :formatter="formatter.userType"/>
+            <el-table-column prop="deptName" :label="$t('user.dept')"/>
+            <el-table-column prop="createTime" :label="$t('common.create_time')"/>
+            <el-table-column prop="status" :label="$t('user.status')" :formatter="formatter.status"/>
             <el-table-column class-name="table-options"
-                             label="操作"
+                             :label="$t('op.op')"
                              width="250px" align="center">
                 <template slot-scope="scope">
                     <el-button
@@ -63,14 +64,14 @@
                         size="mini"
                         type="primary"
                         icon="el-icon-edit"
-                        @click="edit(scope.row)">{{$t("edit")}}
+                        @click="edit(scope.row)">{{$t("op.edit")}}
                     </el-button>
                     <el-button
                         size="mini"
                         type="primary"
                         icon="el-icon-check"
                         class="filter-item"
-                        @click="pwd(scope.row)">密码重置
+                        @click="pwd(scope.row)">{{$t("op.reset_pass")}}
                     </el-button>
                     <el-popover
                         :ref="scope.row.id"
@@ -83,7 +84,7 @@
                                        @click="subDelete(scope.row.id)">确定
                             </el-button>
                         </div>
-                        <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t("delete")}}</el-button>
+                        <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t("op.delete")}}</el-button>
                     </el-popover>
                 </template>
             </el-table-column>

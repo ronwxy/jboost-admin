@@ -6,7 +6,7 @@
                 size="mini"
                 type="primary"
                 icon="el-icon-plus"
-                @click="add">新增
+                @click="add">{{$t('op.add')}}
             </el-button>
         </div>
         <!--表单组件-->
@@ -21,16 +21,16 @@
             <el-table-column label="操作"
                              width="250px" align="center">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)">{{$t("edit")}}</el-button>
+                    <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)">{{$t("op.edit")}}</el-button>
                     <el-popover :ref="scope.row.id" placement="top" width="200">
                         <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
                         <div style="text-align: right; margin: 0">
-                            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">{{$t('cancel')}}</el-button>
+                            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">{{$t('op.cancel')}}</el-button>
                             <el-button :loading="delLoading" type="primary" size="mini"
                                        @click="subDelete(scope.row.id)">确定
                             </el-button>
                         </div>
-                        <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t('delete')}}</el-button>
+                        <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t('op.delete')}}</el-button>
                     </el-popover>
                 </template>
             </el-table-column>
