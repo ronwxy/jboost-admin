@@ -41,8 +41,10 @@ const zh = {
         edit: "编辑",
         save: "保存",
         cancel: "取消",
+        confirm: "确定",
         reset: "重置",
         reset_pass: "重置密码",
+        ensure_del: "确定删除该条数据吗?",
     },
 
     page: {
@@ -60,6 +62,7 @@ const zh = {
         user_type: "用户类型",
         dept: "组织机构",
         status: "状态" 
+
     },
 
     role: {

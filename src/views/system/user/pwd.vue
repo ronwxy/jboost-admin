@@ -81,7 +81,7 @@
                 resetPass(this.form).then(res => {
                     this.resetForm();
                     this.$notify({
-                        title: '密码重置成功',
+                        title: this.$t('op.success'), //'密码重置成功',
                         type: 'success',
                         duration: 2500
                     });

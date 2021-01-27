@@ -77,11 +77,11 @@
                         :ref="scope.row.id"
                         placement="top"
                         width="180">
-                        <p>{{$t("isDelData")}}</p>
+                        <p>{{$t("op.ensure_del")}}</p>
                         <div style="text-align: right; margin: 0">
-                            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">{{$t('cancel')}}</el-button>
+                            <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">{{$t('op.cancel')}}</el-button>
                             <el-button :loading="delLoading" type="primary" size="mini"
-                                       @click="subDelete(scope.row.id)">确定
+                                       @click="subDelete(scope.row.id)">{{$t('op.confirm')}}
                             </el-button>
                         </div>
                         <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini">{{$t("op.delete")}}</el-button>
@@ -183,7 +183,7 @@
                     this.dleChangecurrent();
                     this.init();
                     this.$notify({
-                        title: '删除成功',
+                        title: this.$t('op.success'), //'删除成功',
                         type: 'success',
                         duration: 2500
                     })
